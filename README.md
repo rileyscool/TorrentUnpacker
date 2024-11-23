@@ -1,2 +1,37 @@
 # TorrentUnpacker
-creates a web page where you can upload .torrent files and they will be sorted between movies and shows, creating a folder for the show and subfolder for each season.
+# Torrent File Organizer
+
+A web application for uploading `.torrent` files and automatically sorting them into categories (Movies and Shows). For TV shows, it creates a folder for the show and organizes seasons into subfolders.
+
+## Features
+
+- Upload `.torrent` files via a web interface.
+- Automatically categorizes `.torrent` files as Movies or TV Shows.
+- For TV Shows:
+  - Creates a folder for each show.
+  - Creates subfolders for each season.
+- Simple and intuitive UI for managing uploads.
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+## Installation
+
+1. Clone the Repo
+``bash
+  git clone https://github.com/rileyscool/TorrentUpacker.git
+  cd TorrentUnpacker
+``
+
+2. Install Dependencies
+``bash
+   npm install
+``
+
+3. Start
+``bash
+  node index.js
+``
+
