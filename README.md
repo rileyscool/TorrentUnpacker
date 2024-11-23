@@ -1,5 +1,4 @@
 # TorrentUnpacker
-# Torrent File Organizer
 
 A web application for uploading `.torrent` files and automatically sorting them into categories (Movies and Shows). For TV shows, it creates a folder for the show and organizes seasons into subfolders.
 
