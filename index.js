@@ -45,24 +45,92 @@ const log = (message) => {
 app.get("/", (req, res) => {
     res.send(`
     <html>
+      <head>
+        <title>Upload a Movie or Show Torrent</title>
+        <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f3f4f6;
+              margin: 0;
+              padding: 0;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+          }
+          .container {
+              background-color: #ffffff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              width: 400px;
+              text-align: center;
+          }
+          h1 {
+              color: #333333;
+              margin-bottom: 20px;
+          }
+          form {
+              margin-bottom: 20px;
+          }
+          input[type="file"] {
+              margin-bottom: 10px;
+          }
+          button {
+              background-color: #4CAF50;
+              color: white;
+              border: none;
+              padding: 10px 15px;
+              font-size: 16px;
+              border-radius: 4px;
+              cursor: pointer;
+              transition: background-color 0.3s;
+          }
+          button:hover {
+              background-color: #45a049;
+          }
+          footer {
+              margin-top: 20px;
+              font-size: 14px;
+              color: #555555;
+          }
+          .alert {
+              background-color: #f8d7da;
+              color: #721c24;
+              padding: 10px;
+              border-radius: 4px;
+              margin-top: 20px;
+              display: none;
+          }
+        </style>
+      </head>
       <body>
-        <h1>Upload a Movie or Show Torrent</h1>
-        <form ref="uploadForm" action="/upload" method="post" encType="multipart/form-data">
-          <input type="file" name="torrents" multiple/>
-          <button type="submit">Upload Torrent</button>
-        </form>
-        <br>
+        <div class="container">
+          <h1>Upload a Movie or Show Torrent</h1>
+          <form ref="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+            <input type="file" name="torrents" multiple/>
+            <button type="submit">Upload Torrent</button>
+          </form>
+          <div class="alert" id="alertBox">WebSocket message will appear here!</div>
+          <footer>Powered by WebTorrent and Express.js</footer>
+        </div>
         <script>
-  const ws = new WebSocket('ws://' + window.location.host);
+          const ws = new WebSocket('ws://' + window.location.host);
 
-    ws.onmessage = (event) => {
-        alert(event.data);
-    }
-    </script>
+          ws.onmessage = (event) => {
+              const alertBox = document.getElementById('alertBox');
+              alertBox.textContent = event.data;
+              alertBox.style.display = 'block';
+              setTimeout(() => {
+                  alertBox.style.display = 'none';
+              }, 5000); // Hide alert after 5 seconds
+          };
+        </script>
       </body>
     </html>
   `);
-})
+});
+
 
 let isProcessing = false; // Flag to indicate if a torrent is being processed
 let currentTorrent = null; // Track the currently processing torrent
@@ -77,7 +145,8 @@ const processNextTorrent = () => {
     client.add(torrentFilePath, (torrent) => {
         log(`Started processing torrent: ${torrent.infoHash}`);
 
-        const episodePattern = /S(\d+)[\s._-]*E?(\d+)/i;
+        const episodePattern = /(?:S(?:eason)?\s*(\d{1,2})[\s._-]*)?(?:E(?:pisode)?\s*(\d{1,3}))/i;
+
         const isShow = torrent.files.some(file => episodePattern.test(file.name));
         const allowedExtensions = ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm'];
 
